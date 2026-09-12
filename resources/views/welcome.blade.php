@@ -144,19 +144,19 @@
 
         /* ==================================================
            SURAT: AMPLOP KRIM + PITA MERAH -> KERTAS DI DALAM AMPLOP
-           (teks surat sekarang tampil DI DALAM amplop)
+           (teks surat sekarang tampil DI DALAM amplop, lalu naik
+           keluar dan menyembul di atas amplop seperti video referensi)
            ================================================== */
         .letter-scene {
             position: relative;
-            width: min(88vw, 340px);
-            height: min(78vh, 420px);
+            width: min(85vw, 300px);
+            height: min(45vh, 190px);
         }
 
         .cream-letter {
             position: absolute;
             inset: 0;
-            border-radius: 20px;
-            overflow: hidden;
+            border-radius: 14px;
             perspective: 900px;
         }
 
@@ -165,50 +165,110 @@
             inset: 0;
             z-index: 1;
             overflow: hidden;
-            border-radius: 20px;
+            border-radius: 14px;
             background: linear-gradient(150deg, #fff8e8, #f2dfb8 55%, #e9cf9e);
             border: 1px solid rgba(139, 91, 50, .3);
-            box-shadow: 0 28px 70px rgba(0,0,0,.35);
+            box-shadow: 0 20px 50px rgba(0,0,0,.35);
         }
 
         .cream-letter-body::before {
             content: "";
             position: absolute;
-            inset: 10px;
+            inset: 8px;
             border: 1px solid rgba(139,91,50,.18);
-            border-radius: 12px;
+            border-radius: 9px;
+        }
+
+        /* Wadah kliping untuk kertas surat: dibatasi HANYA di bagian bawah
+           (sejajar dasar amplop) supaya kertas tetap tersembunyi saat masih
+           di dalam amplop, tapi TIDAK terpotong saat naik dan menyembul
+           di atas amplop — persis seperti video referensi. clip-path boleh
+           punya nilai di luar 0-100% sehingga area atas dibiarkan longgar.
+           Elemen ini sengaja diletakkan DI DALAM .cream-letter (bukan di
+           luar) supaya urutan tumpuk (z-index) kertas tetap satu grup
+           dengan badan amplop, bagian depan amplop, flap, dan pita —
+           sehingga kertas benar-benar keselip di tengah, bukan malah
+           tampil paling depan menutupi seluruh amplop. */
+        .paper-clip {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+            clip-path: polygon(-25% -280%, 125% -280%, 125% 100%, -25% 100%);
+        }
+
+        /* Bagian DEPAN amplop: lapisan ini menutupi kertas surat sepenuhnya
+           (sama seperti badan belakang amplop), diletakkan DI ATAS kertas
+           tapi DI BAWAH flap+pita. Efeknya: kertas jadi "terselip" di
+           tengah, di antara belakang dan depan amplop — hanya kelihatan
+           saat sudah naik melewati bibir atas amplop (lubang bekas flap),
+           persis seperti video referensi. */
+        .envelope-front {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            border-radius: 14px;
+            background: linear-gradient(150deg, #fff8e8, #f2dfb8 55%, #e9cf9e);
+            border: 1px solid rgba(139, 91, 50, .3);
+        }
+
+        .envelope-front::before {
+            content: "";
+            position: absolute;
+            inset: 8px;
+            border: 1px solid rgba(139,91,50,.18);
+            border-radius: 9px;
         }
 
         /* Flap segitiga di bagian atas amplop, menutupi lubang amplop.
            Terbuka (terlipat ke belakang) sesudah pita lepas, sebelum
-           suratnya ditarik keluar. */
+           suratnya ditarik keluar. Rasio flap dibikin lebih pipih supaya
+           proporsinya seperti amplop biasa (bukan amplop tinggi). */
         .envelope-flap {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 60%;
-            z-index: 3;
+            height: 52%;
+            z-index: 4;
             clip-path: polygon(0 0, 100% 0, 50% 96%);
-            background: linear-gradient(165deg, #f7e6c2, #e6c691 55%, #d9b57c);
-            border-top: 1px solid rgba(139, 91, 50, .28);
-            box-shadow: 0 10px 18px rgba(0,0,0,.12);
+            /* Sama arah & palet warna dengan body amplop (150deg, krim ke
+               tan), cuma sedikit lebih gelap di bagian bawah -- jadi beda
+               keliatan tapi tetap nyatu rapi, bukan kayak dua potongan
+               warna yang beda sendiri (itu penyebab kelihatan patah). */
+            background: linear-gradient(150deg, #fdf3dd, #ecd7ab 55%, #ddbe84);
+            box-shadow: 0 8px 16px rgba(0,0,0,.15);
             transform-origin: top center;
             backface-visibility: hidden;
         }
 
-        /* Kertas isi surat: tersembunyi DI BAWAH amplop sampai pita dibuka,
-           lalu meluncur naik dari bawah ke atas membawa teksnya sekaligus */
+        /* Garis lipatan tipis di tepi bawah flap supaya batas flap dan
+           body tetap kebaca, tanpa bikin kontrasnya kasar */
+        .envelope-flap::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            clip-path: polygon(0 0, 100% 0, 50% 96%);
+            box-shadow: inset 0 -1px 0 rgba(139, 91, 50, .35);
+            pointer-events: none;
+        }
+
+        /* Kertas isi surat: mulai tersembunyi DI BAWAH amplop (di luar area
+           yang tidak ter-clip) sampai pita+flap terbuka, lalu meluncur naik
+           dan berhenti menyembul di ATAS amplop (bukan cuma mengisi penuh
+           di dalam amplop) */
         .white-paper {
             position: absolute;
-            inset: 16px;
-            z-index: 2;
+            inset: 12px;
             overflow-y: auto;
-            border-radius: 13px;
+            border-radius: 10px;
             background: #fffdf8;
             box-shadow: 0 10px 30px rgba(0,0,0,.18);
-            padding: 22px 20px;
-            transform: translateY(120%);
+            padding: 18px 16px;
+            pointer-events: auto;
+            transform: translateY(118%) scale(.88);
+            transform-origin: bottom center;
+            z-index: 2;
         }
 
         .paper-content {
@@ -227,16 +287,16 @@
 
         .paper-title {
             display: block;
-            font-size: 19px;
+            font-size: 17px;
             font-weight: 700;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             color: #4a3527;
         }
 
         .paper-body p {
-            font-size: 12.5px;
-            line-height: 1.7;
-            margin-bottom: 10px;
+            font-size: 12px;
+            line-height: 1.65;
+            margin-bottom: 9px;
             color: #6b5340;
         }
 
@@ -245,8 +305,8 @@
         }
 
         .paper-signoff {
-            margin-top: 14px;
-            padding-top: 12px;
+            margin-top: 12px;
+            padding-top: 10px;
             border-top: 1px solid rgba(139,91,50,.2);
         }
 
@@ -264,20 +324,32 @@
             color: #b3405a;
         }
 
+        /* Wadah khusus buat pita: DIBATASI (overflow hidden) mengikuti
+           bentuk membulat amplop, supaya saat pita mundur/lepas dia
+           benar-benar "tenggelam" rapi ke bawah bibir amplop dan tidak
+           meluber keluar dari sudut amplop yang membulat (itu penyebab
+           animasi pita kelihatan aneh/patah sebelumnya). */
+        .ribbon-clip {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            border-radius: 14px;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
         /* Pita merah yang menutupi surat sebelum dibuka */
         .ribbon-vertical,
         .ribbon-horizontal {
             position: absolute;
             inset: 0;
-            z-index: 4;
-            pointer-events: none;
         }
 
         .ribbon-v-top,
         .ribbon-v-bottom {
             position: absolute;
             left: 50%;
-            width: 28px;
+            width: 22px;
             height: 50%;
             transform: translateX(-50%);
             background: linear-gradient(180deg, #f0537a, #b30e35);
@@ -286,19 +358,17 @@
 
         .ribbon-v-top {
             top: 0;
-            border-radius: 4px 4px 0 0;
         }
 
         .ribbon-v-bottom {
             bottom: 0;
-            border-radius: 0 0 4px 4px;
         }
 
         .ribbon-h-left,
         .ribbon-h-right {
             position: absolute;
             top: 50%;
-            height: 28px;
+            height: 22px;
             width: 50%;
             transform: translateY(-50%);
             background: linear-gradient(90deg, #f0537a, #b30e35);
@@ -307,29 +377,27 @@
 
         .ribbon-h-left {
             left: 0;
-            border-radius: 4px 0 0 4px;
         }
 
         .ribbon-h-right {
             right: 0;
-            border-radius: 0 4px 4px 0;
         }
 
         .ribbon-bow {
             position: absolute;
             left: 50%;
             top: 50%;
-            z-index: 5;
-            width: 62px;
-            height: 40px;
+            z-index: 6;
+            width: 52px;
+            height: 34px;
             transform: translate(-50%, -50%);
         }
 
         .bow-wing {
             position: absolute;
             top: 0;
-            width: 29px;
-            height: 29px;
+            width: 24px;
+            height: 24px;
             border-radius: 50% 50% 50% 0;
             background: linear-gradient(145deg, #ff6a8f, #b30e35);
             box-shadow: 0 5px 12px rgba(150,0,20,.35);
@@ -349,33 +417,35 @@
             position: absolute;
             left: 50%;
             top: 50%;
-            width: 15px;
-            height: 15px;
+            width: 13px;
+            height: 13px;
             border-radius: 50%;
             background: #e52a55;
             transform: translate(-50%, -50%);
             box-shadow: 0 2px 6px rgba(0,0,0,.3);
         }
 
-        /* ---------- Animasi buka pita: mundur perlahan sampai habis (tidak pecah/berputar) ---------- */
+        /* ---------- Animasi buka pita: mundur pelan-pelan lalu tenggelam
+           habis di balik tepi amplop (dibatasi oleh .ribbon-clip di atas,
+           jadi tidak lagi meluber keluar dari sudut amplop) ---------- */
         @keyframes ribbonRetreatUp {
-            0%   { transform: translate(-50%, 0); }
-            100% { transform: translate(-50%, -105%); }
+            0%   { transform: translate(-50%, 0); opacity: 1; }
+            100% { transform: translate(-50%, -100%); opacity: 1; }
         }
 
         @keyframes ribbonRetreatDown {
-            0%   { transform: translate(-50%, 0); }
-            100% { transform: translate(-50%, 105%); }
+            0%   { transform: translate(-50%, 0); opacity: 1; }
+            100% { transform: translate(-50%, 100%); opacity: 1; }
         }
 
         @keyframes ribbonRetreatLeft {
-            0%   { transform: translateY(-50%) translateX(0); }
-            100% { transform: translateY(-50%) translateX(-105%); }
+            0%   { transform: translateY(-50%) translateX(0); opacity: 1; }
+            100% { transform: translateY(-50%) translateX(-100%); opacity: 1; }
         }
 
         @keyframes ribbonRetreatRight {
-            0%   { transform: translateY(-50%) translateX(0); }
-            100% { transform: translateY(-50%) translateX(105%); }
+            0%   { transform: translateY(-50%) translateX(0); opacity: 1; }
+            100% { transform: translateY(-50%) translateX(100%); opacity: 1; }
         }
 
         @keyframes bowFade {
@@ -389,27 +459,33 @@
             100% { transform: rotateX(-120deg); }
         }
 
-        /* Kertas surat ditarik naik dari dalam amplop ke posisi normalnya,
-           membawa teksnya sekaligus (bukan pop-up/scale) */
+        /* Kertas surat ditarik naik dari dalam amplop, melewati bibir
+           amplop, lalu berpindah dan berhenti di DEPAN amplop (z-index
+           dinaikkan lewat class is-in-front, ditambahkan lewat JS tepat
+           saat animasi ini mulai) supaya kertas benar-benar tampak
+           "keluar dari dalam" lalu "ada di depan" amplop, bukan cuma
+           menyembul separuh selamanya. */
         @keyframes paperSlideUp {
-            0%   { transform: translateY(120%); }
-            100% { transform: translateY(0%); }
+            0%   { transform: translateY(118%) scale(.88) rotate(0deg); }
+            55%  { transform: translateY(0%) scale(1.02) rotate(-1deg); }
+            80%  { transform: translateY(-38%) scale(1) rotate(-2.5deg); }
+            100% { transform: translateY(-34%) scale(1) rotate(-2deg); }
         }
 
         .message-button.is-opening .ribbon-v-top {
-            animation: ribbonRetreatUp 1.2s ease-in-out forwards;
+            animation: ribbonRetreatUp 1.1s ease-in-out forwards;
         }
 
         .message-button.is-opening .ribbon-v-bottom {
-            animation: ribbonRetreatDown 1.2s ease-in-out forwards;
+            animation: ribbonRetreatDown 1.1s ease-in-out forwards;
         }
 
         .message-button.is-opening .ribbon-h-left {
-            animation: ribbonRetreatLeft 1.2s ease-in-out forwards;
+            animation: ribbonRetreatLeft 1.1s ease-in-out forwards;
         }
 
         .message-button.is-opening .ribbon-h-right {
-            animation: ribbonRetreatRight 1.2s ease-in-out forwards;
+            animation: ribbonRetreatRight 1.1s ease-in-out forwards;
         }
 
         .message-button.is-opening .ribbon-bow {
@@ -419,12 +495,19 @@
 
         .message-button.is-opening .envelope-flap {
             animation: flapOpen .85s ease-in forwards;
-            animation-delay: .8s;
+            animation-delay: .75s;
         }
 
         .message-button.is-opening .white-paper {
-            animation: paperSlideUp 1.15s cubic-bezier(.22,1,.36,1) forwards;
-            animation-delay: 1.35s;
+            animation: paperSlideUp 1.3s cubic-bezier(.22,1,.36,1) forwards;
+            animation-delay: 1.4s;
+        }
+
+        /* Begitu suratnya mulai naik, pindahkan ke depan (di atas amplop
+           depan, flap, dan pita) supaya benar-benar terlihat "di depan
+           amplop", bukan cuma menyembul di lubang atas amplop. */
+        .message-button.is-opening .white-paper {
+            z-index: 10;
         }
 
         .message-button.is-opening .message-badge,
@@ -434,35 +517,108 @@
             transition: opacity .3s ease;
         }
 
+        /* ==================================================
+           TAHAP 2: surat yang sudah menyembul separuh (hasil animasi
+           di atas) dipencet SEKALI LAGI -> muncul kartu surat TERPISAH
+           di tengah layar (bukan lagi memperbesar kertas kecil di
+           dalam amplop -- itu penyebab tampilannya rusak/kepotong
+           sebelumnya). Kartu ini posisinya "fixed" ke layar, jadi
+           benar-benar berada di DEPAN amplop dan seluruh halaman.
+           ================================================== */
+        #letterModal {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #letterModal.is-visible {
+            display: flex;
+        }
+
+        #letterBackdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, .78);
+            opacity: 0;
+            transition: opacity .4s ease;
+        }
+
+        #letterModal.is-visible #letterBackdrop {
+            opacity: 1;
+        }
+
+        #letterCard {
+            position: relative;
+            width: min(92vw, 380px);
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 16px;
+            background: #fffdf8;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, .5);
+            padding: 30px 24px 26px;
+            text-align: left;
+            font-family: Georgia, serif;
+            opacity: 0;
+            transform: scale(.86) translateY(14px);
+            transition: opacity .4s ease, transform .4s cubic-bezier(.22, 1, .36, 1);
+        }
+
+        #letterModal.is-visible #letterCard {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        #letterClose {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(139, 91, 50, .12);
+            color: #6b5340;
+            font-size: 14px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
         @media (max-width: 639px) {
             .letter-scene {
-                width: min(86vw, 300px);
-                height: min(64dvh, 390px);
+                width: min(88vw, 280px);
+                height: min(40vh, 170px);
             }
 
             .white-paper {
-                inset: 12px;
-                padding: 18px 16px;
+                inset: 10px;
+                padding: 14px 12px;
             }
 
             .ribbon-v-top,
             .ribbon-v-bottom {
-                width: 24px;
+                width: 18px;
             }
 
             .ribbon-h-left,
             .ribbon-h-right {
-                height: 24px;
+                height: 18px;
             }
 
             .ribbon-bow {
-                width: 52px;
-                height: 34px;
+                width: 44px;
+                height: 28px;
             }
 
             .bow-wing {
-                width: 24px;
-                height: 24px;
+                width: 20px;
+                height: 20px;
             }
         }
 
@@ -732,7 +888,8 @@
                     Aku sengaja bikin ini khusus buat kamu.
                 </p>
 
-                <!-- SURAT KRIM + PITA MERAH -> TEKS SURAT MUNCUL DI DALAM AMPLOP -->
+                <!-- SURAT KRIM + PITA MERAH -> TEKS SURAT MUNCUL DI DALAM AMPLOP,
+                     LALU NAIK DAN PINDAH KE DEPAN AMPLOP -->
                 <button
                     id="messageButton"
                     type="button"
@@ -746,46 +903,58 @@
                                     transition-all duration-500 group-hover:bg-rose-500/35"></div>
 
                         <div class="cream-letter">
-                            <!-- Badan surat warna krim -->
+                            <!-- Badan surat warna krim (belakang amplop) -->
                             <div class="cream-letter-body"></div>
 
-                            <!-- Flap amplop: terbuka (terlipat ke belakang) setelah pita lepas -->
-                            <div class="envelope-flap"></div>
+                            <!-- Kertas isi surat: diletakkan DI DALAM urutan lapisan
+                                 amplop (di atas badan belakang, di bawah bagian depan)
+                                 supaya benar-benar "keselip" di tengah amplop, bukan
+                                 melayang di depan semuanya -->
+                            <div class="paper-clip">
+                                <div class="white-paper">
+                                    <div class="paper-content">
+                                        <span class="paper-label">For Raden Ayu Giselle</span>
+                                        <span class="paper-title">Dear Babe❤️</span>
 
-                            <!-- Kertas isi surat: ditarik naik dari dalam amplop setelah flap terbuka -->
-                            <div class="white-paper">
-                                <div class="paper-content">
-                                    <span class="paper-label">For Raden Ayu Giselle</span>
-                                    <span class="paper-title">Untuk kamu ❤️</span>
+                                        <div class="paper-body">
+                                            <p>Hai Sayangg.</p>
+                                            <p>Mungkin ini cuma sebuah website kecil, tapi aku bikin ini dengan niat yang besar.</p>
+                                            <p>Aku cuma mau bilang kalau aku bersyukur bisa kenal dan punya kamu di hidupku.</p>
+                                            <p>Semoga sesederhana apa pun hal yang aku kasih, kamu tetap bisa ngerasain kalau ini dibuat khusus untuk kamu.</p>
+                                            <p class="paper-strong">Terima kasih sudah menjadi seseorang yang begitu berarti buat aku.</p>
+                                        </div>
 
-                                    <div class="paper-body">
-                                        <p>Hai Sayangg.</p>
-                                        <p>Mungkin ini cuma sebuah website kecil, tapi aku bikin ini dengan niat yang besar.</p>
-                                        <p>Aku cuma mau bilang kalau aku bersyukur bisa kenal dan punya kamu di hidupku.</p>
-                                        <p>Semoga sesederhana apa pun hal yang aku kasih, kamu tetap bisa ngerasain kalau ini dibuat khusus untuk kamu.</p>
-                                        <p class="paper-strong">Terima kasih sudah menjadi seseorang yang begitu berarti buat aku.</p>
-                                    </div>
-
-                                    <div class="paper-signoff">
-                                        <span class="signoff-label">With all my heart,</span>
-                                        <span class="signoff-name">Jova Liandri</span>
+                                        <div class="paper-signoff">
+                                            <span class="signoff-label">With all my heart,</span>
+                                            <span class="signoff-name">Jova Liandri</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Pita merah yang menutupi surat -->
-                            <div class="ribbon-vertical">
-                                <div class="ribbon-v-top"></div>
-                                <div class="ribbon-v-bottom"></div>
-                            </div>
-                            <div class="ribbon-horizontal">
-                                <div class="ribbon-h-left"></div>
-                                <div class="ribbon-h-right"></div>
-                            </div>
-                            <div class="ribbon-bow">
-                                <span class="bow-wing bow-wing-left"></span>
-                                <span class="bow-wing bow-wing-right"></span>
-                                <span class="bow-knot"></span>
+                            <!-- Bagian DEPAN amplop: menutupi kertas surat sampai ia
+                                 naik melewati bibir amplop -->
+                            <div class="envelope-front"></div>
+
+                            <!-- Flap amplop: terbuka (terlipat ke belakang) setelah pita lepas -->
+                            <div class="envelope-flap"></div>
+
+                            <!-- Pita merah yang menutupi surat, dibatasi bentuk
+                                 membulat amplop supaya animasi mundurnya rapi -->
+                            <div class="ribbon-clip">
+                                <div class="ribbon-vertical">
+                                    <div class="ribbon-v-top"></div>
+                                    <div class="ribbon-v-bottom"></div>
+                                </div>
+                                <div class="ribbon-horizontal">
+                                    <div class="ribbon-h-left"></div>
+                                    <div class="ribbon-h-right"></div>
+                                </div>
+                                <div class="ribbon-bow">
+                                    <span class="bow-wing bow-wing-left"></span>
+                                    <span class="bow-wing bow-wing-right"></span>
+                                    <span class="bow-knot"></span>
+                                </div>
                             </div>
                         </div>
 
@@ -813,6 +982,31 @@
         </section>
 
     </main>
+
+    <!-- MODAL: kartu surat penuh, tampil TERPISAH di depan amplop & halaman
+         (dipicu saat surat yang sudah menyembul separuh dipencet lagi) -->
+    <div id="letterModal">
+        <div id="letterBackdrop"></div>
+        <div id="letterCard">
+            <button id="letterClose" type="button" aria-label="Tutup surat">✕</button>
+
+            <span class="paper-label">For Raden Ayu Giselle</span>
+            <span class="paper-title">Dear Babe❤️</span>
+
+            <div class="paper-body">
+                <p>Hai Sayangg.</p>
+                <p>Mungkin ini cuma sebuah website kecil, tapi aku bikin ini dengan niat yang besar.</p>
+                <p>Aku cuma mau bilang kalau aku bersyukur bisa kenal dan punya kamu di hidupku.</p>
+                <p>Semoga sesederhana apa pun hal yang aku kasih, kamu tetap bisa ngerasain kalau ini dibuat khusus untuk kamu.</p>
+                <p class="paper-strong">Terima kasih sudah menjadi seseorang yang begitu berarti buat aku.</p>
+            </div>
+
+            <div class="paper-signoff">
+                <span class="signoff-label">With all my heart,</span>
+                <span class="signoff-name">Jova Liandri</span>
+            </div>
+        </div>
+    </div>
 
     <!-- TAMBAHAN AUDIO UNTUK LAGU BRUNO MARS - RISK IT ALL -->
     <audio id="bgMusic" src="/music/risk_it_all.mp3"></audio>
@@ -996,20 +1190,72 @@
 
 
         /*
-         * Tombol buka surat: pita terbuka, lalu kertas isi surat
-         * meluncur naik dari bawah ke atas DI DALAM amplop
-         * (bukan popup/scale di tengah)
+         * Tombol buka surat, dua tahap:
+         * Tahap 1 (klik pertama): pita mundur & tenggelam di balik tepi
+         * amplop, flap terbuka ke belakang, lalu kertas isi surat
+         * meluncur naik dan menyembul separuh dari dalam amplop.
+         * Tahap 2 (klik kedua, pas surat lagi menyembul separuh): surat
+         * itu dipencet lagi, lalu dia pindah sepenuhnya dari "di dalam
+         * amplop" ke "di depan amplop" (diperbesar & ditempatkan di
+         * depan supaya nyaman dibaca).
          */
-        let messageOpened = false;
+        let messageStage = 0; // 0 = tertutup, 1 = lagi animasi/menyembul, 1.5 = siap diklik lagi, 2 = kartu surat lagi terbuka
+
+        // Durasi total tahap 1 sebelum surat berhenti menyembul & siap diklik lagi
+        const STAGE1_DELAY_MS = 1400; // delay sebelum paperSlideUp mulai
+        const STAGE1_DURATION_MS = 1300; // durasi animasi paperSlideUp
+        const STAGE1_TOTAL_MS = STAGE1_DELAY_MS + STAGE1_DURATION_MS;
+
+        const letterModal = document.getElementById('letterModal');
+        const letterBackdrop = document.getElementById('letterBackdrop');
+        const letterClose = document.getElementById('letterClose');
+
+        function openLetterCard() {
+            letterModal.classList.add('is-visible');
+        }
+
+        function closeLetterCard() {
+            letterModal.classList.remove('is-visible');
+            // biar bisa dibuka lagi kalau suratnya diklik sekali lagi
+            if (messageStage === 2) {
+                messageStage = 1.5;
+            }
+        }
 
         messageButton.addEventListener('click', () => {
 
-            if (messageOpened) return;
-            messageOpened = true;
+            if (messageStage === 0) {
 
-            messageButton.classList.add('is-opening');
+                messageStage = 1;
+                messageButton.classList.add('is-opening');
+
+                // Begitu surat selesai menyembul separuh, izinkan klik
+                // berikutnya untuk membuka kartu suratnya di depan
+                setTimeout(() => {
+                    if (messageStage === 1) {
+                        messageStage = 1.5; // siap diklik lagi
+                    }
+                }, STAGE1_TOTAL_MS);
+
+                return;
+            }
+
+            if (messageStage === 1.5) {
+
+                messageStage = 2;
+                openLetterCard();
+
+            }
+
+            // Kalau masih dalam proses animasi (stage 1, belum 1.5)
+            // atau kartu surat sedang terbuka (stage 2), klik amplop
+            // diabaikan supaya tidak nabrak animasi/kartu yang aktif.
 
         });
+
+        // Tutup kartu surat lewat tombol ✕ atau klik area gelap di luar kartu
+        letterClose.addEventListener('click', closeLetterCard);
+        letterBackdrop.addEventListener('click', closeLetterCard);
 
     </script>
 
