@@ -427,7 +427,7 @@
     </main>
 
     <!-- TAMBAHAN AUDIO UNTUK LAGU BRUNO MARS - RISK IT ALL -->
-    <audio id="bgMusic" src="/music/risk_it_all.mp3"></audio>
+    <audio id="bgMusic" src="{{ asset('music/risk_it_all.mp3') }}"></audio>
 
 
     <script>
@@ -531,8 +531,8 @@
 
                 const rose = document.createElement('img');
 
-                // Menggunakan 2 gambar: rose.png dan rose2.png secara acak
-                rose.src = Math.random() > 0.5 ? '/images/rose.png' : '/images/rose2.png';
+                // Menggunakan 2 gambar: rose.png dan rose2.png secara acak (DIPERBAIKI)
+                rose.src = Math.random() > 0.5 ? "{{ asset('images/rose.png') }}" : "{{ asset('images/rose2.png') }}";
 
                 rose.className =
                     'absolute left-1/2 top-1/2 ' +
