@@ -41,6 +41,87 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* ==================================================
+           AMBIENT MOTION: idle animasi supaya halaman terasa hidup,
+           bukan statis, di setiap bagian (bukan cuma saat diklik)
+           ================================================== */
+        @keyframes floatY {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: .55; transform: scale(1); }
+            50% { opacity: .9; transform: scale(1.1); }
+        }
+
+        @keyframes hintNudge {
+            0%, 100% { transform: translateY(0); opacity: .45; }
+            50% { transform: translateY(-3px); opacity: .85; }
+        }
+
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(18px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes blobDrift {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(24px, -18px) scale(1.1); }
+        }
+
+        @keyframes blobDriftReverse {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-20px, 16px) scale(1.08); }
+        }
+
+        @keyframes gridDrift {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+
+        .bg-blob-1 { animation: blobDrift 11s ease-in-out infinite; }
+        .bg-blob-2 { animation: blobDriftReverse 13s ease-in-out infinite; }
+        .bg-blob-3 { animation: blobDrift 15s ease-in-out infinite; animation-delay: -4s; }
+        .bg-grid { animation: gridDrift 6s linear infinite; }
+
+        .entrance-fade {
+            opacity: 0;
+            animation: fadeInUp .9s ease forwards;
+        }
+
+        .gift-glow {
+            animation: glowPulse 3.4s ease-in-out infinite;
+        }
+
+        #giftButton {
+            animation: floatY 4.2s ease-in-out infinite;
+        }
+
+        #giftButton.is-opening {
+            animation-play-state: paused;
+        }
+
+        .hint-pulse {
+            animation: hintNudge 2.4s ease-in-out infinite;
+        }
+
+        #messageButton {
+            animation: floatY 4.6s ease-in-out infinite;
+            animation-delay: -1.5s;
+        }
+
+        #messageButton.is-opening {
+            animation-play-state: paused;
+        }
+
+        .msg-child {
+            opacity: 0;
+        }
+
+        #messageSection.is-visible .msg-child {
+            animation: fadeInUp .8s ease forwards;
+        }
 
         /* ==================================================
            SURAT: AMPLOP KRIM + PITA MERAH -> KERTAS DI DALAM AMPLOP
@@ -78,7 +159,8 @@
             border-radius: 12px;
         }
 
-        /* Kertas isi surat, tersembunyi di dalam amplop sampai pita dibuka */
+        /* Kertas isi surat: tersembunyi DI BAWAH amplop sampai pita dibuka,
+           lalu meluncur naik dari bawah ke atas membawa teksnya sekaligus */
         .white-paper {
             position: absolute;
             inset: 16px;
@@ -88,16 +170,12 @@
             background: #fffdf8;
             box-shadow: 0 10px 30px rgba(0,0,0,.18);
             padding: 22px 20px;
-            opacity: 0;
-            transform: scale(.35) translateY(10px);
-            transform-origin: center;
+            transform: translateY(120%);
         }
 
         .paper-content {
             text-align: left;
             font-family: Georgia, serif;
-            opacity: 0;
-            transform: translateY(8px);
         }
 
         .paper-label {
@@ -267,31 +345,27 @@
             100% { transform: translate(-50%, -50%) scale(.75); opacity: 0; }
         }
 
-        @keyframes paperPop {
-            0%   { transform: scale(.35) translateY(12px); opacity: 0; }
-            65%  { transform: scale(1.045) translateY(-3px); opacity: 1; }
-            100% { transform: scale(1) translateY(0); opacity: 1; }
-        }
-
-        @keyframes paperContentFade {
-            0%   { opacity: 0; transform: translateY(10px); }
-            100% { opacity: 1; transform: translateY(0); }
+        /* Kertas surat meluncur dari bawah amplop ke posisi normalnya,
+           membawa teksnya sekaligus (bukan pop-up/scale) */
+        @keyframes paperSlideUp {
+            0%   { transform: translateY(120%); }
+            100% { transform: translateY(0%); }
         }
 
         .message-button.is-opening .ribbon-v-top {
-            animation: ribbonRetreatUp 1.4s ease-in-out forwards;
+            animation: ribbonRetreatUp 1.3s ease-in-out forwards;
         }
 
         .message-button.is-opening .ribbon-v-bottom {
-            animation: ribbonRetreatDown 1.4s ease-in-out forwards;
+            animation: ribbonRetreatDown 1.3s ease-in-out forwards;
         }
 
         .message-button.is-opening .ribbon-h-left {
-            animation: ribbonRetreatLeft 1.4s ease-in-out forwards;
+            animation: ribbonRetreatLeft 1.3s ease-in-out forwards;
         }
 
         .message-button.is-opening .ribbon-h-right {
-            animation: ribbonRetreatRight 1.4s ease-in-out forwards;
+            animation: ribbonRetreatRight 1.3s ease-in-out forwards;
         }
 
         .message-button.is-opening .ribbon-bow {
@@ -300,18 +374,14 @@
         }
 
         .message-button.is-opening .white-paper {
-            animation: paperPop .75s cubic-bezier(.22,1,.36,1) forwards;
-            animation-delay: 1.2s;
-        }
-
-        .message-button.is-opening .paper-content {
-            animation: paperContentFade .55s ease forwards;
-            animation-delay: 1.65s;
+            animation: paperSlideUp 1.05s cubic-bezier(.22,1,.36,1) forwards;
+            animation-delay: 1s;
         }
 
         .message-button.is-opening .message-badge,
         .message-button.is-opening .message-instruction {
             opacity: 0;
+            animation: none;
             transition: opacity .3s ease;
         }
 
@@ -362,7 +432,7 @@
     <!-- Background -->
     <div class="fixed inset-0 -z-10 overflow-hidden">
 
-        <div class="absolute left-1/2 top-1/2
+        <div class="bg-blob-1 absolute left-1/2 top-1/2
                     h-[500px] w-[500px]
                     -translate-x-1/2 -translate-y-1/2
                     rounded-full
@@ -370,14 +440,14 @@
                     blur-[130px]">
         </div>
 
-        <div class="absolute -left-40 -top-40
+        <div class="bg-blob-2 absolute -left-40 -top-40
                     h-[400px] w-[400px]
                     rounded-full
                     bg-rose-950/30
                     blur-[120px]">
         </div>
 
-        <div class="absolute -bottom-40 -right-40
+        <div class="bg-blob-3 absolute -bottom-40 -right-40
                     h-[400px] w-[400px]
                     rounded-full
                     bg-red-950/30
@@ -385,7 +455,7 @@
         </div>
 
         <!-- subtle grid -->
-        <div class="absolute inset-0 opacity-[0.035]"
+        <div class="bg-grid absolute inset-0 opacity-[0.035]"
              style="
                 background-image:
                 linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px),
@@ -406,15 +476,15 @@
             class="flex flex-col items-center text-center transition-all duration-700"
         >
 
-            <p class="mb-3 text-xs font-medium uppercase tracking-[0.45em] text-rose-300/70">
+            <p class="entrance-fade mb-3 text-xs font-medium uppercase tracking-[0.45em] text-rose-300/70" style="animation-delay:.1s;">
                 A little something for you
             </p>
 
-            <h1 class="text-3xl font-semibold tracking-tight sm:text-6xl">
-                For <span class="text-rose-400">Gisel</span>
+            <h1 class="entrance-fade text-3xl font-semibold tracking-tight sm:text-6xl" style="animation-delay:.25s;">
+                For <span class="text-rose-400">Sweetheart</span>
             </h1>
 
-            <p class="mt-4 max-w-md px-3 text-sm leading-6 text-white/50 sm:px-0 sm:text-base sm:leading-7">
+            <p class="entrance-fade mt-4 max-w-md px-3 text-sm leading-6 text-white/50 sm:px-0 sm:text-base sm:leading-7" style="animation-delay:.4s;">
                 Ada sesuatu kecil yang aku siapin buat kamu.
                 Coba buka hadiahnya.
             </p>
@@ -423,13 +493,13 @@
             <!-- GIFT -->
             <button
                 id="giftButton"
-                aria-label="Buka hadiah untuk Gisel"
+                aria-label="Buka hadiah untuk kamu"
                 type="button"
                 class="group relative mt-10 h-44 w-44 touch-manipulation outline-none sm:mt-12 sm:h-56 sm:w-56"
             >
 
                 <!-- Glow -->
-                <div class="absolute inset-4
+                <div class="gift-glow absolute inset-4
                             rounded-full
                             bg-red-600/20
                             blur-3xl
@@ -558,7 +628,7 @@
 
                 <!-- Text -->
                 <span
-                    class="absolute -bottom-12 left-1/2
+                    class="hint-pulse absolute -bottom-12 left-1/2
                            -translate-x-1/2
                            whitespace-nowrap
                            text-xs
@@ -594,21 +664,22 @@
             <div class="flex flex-col items-center text-center">
 
                 <div
-                    class="mb-5 rounded-full
+                    class="msg-child mb-5 rounded-full
                            border border-white/10
                            bg-white/[0.04]
                            px-4 py-2 text-[10px]
                            uppercase tracking-[0.35em]
                            text-rose-300/70 backdrop-blur-xl"
+                    style="animation-delay:.15s;"
                 >
                     Just for you
                 </div>
 
-                <h2 class="text-2xl font-semibold sm:text-5xl">
+                <h2 class="msg-child text-2xl font-semibold sm:text-5xl" style="animation-delay:.3s;">
                     Ada pesan buat kamu
                 </h2>
 
-                <p class="mt-3 max-w-sm text-sm leading-6 text-white/40">
+                <p class="msg-child mt-3 max-w-sm text-sm leading-6 text-white/40" style="animation-delay:.45s;">
                     Aku sengaja bikin ini khusus buat kamu.
                 </p>
 
@@ -616,7 +687,7 @@
                 <button
                     id="messageButton"
                     type="button"
-                    aria-label="Buka surat untuk Gisel"
+                    aria-label="Buka surat untuk kamu"
                     class="message-button group relative mt-8 flex touch-manipulation flex-col items-center outline-none"
                 >
                     <div class="letter-scene">
@@ -629,7 +700,7 @@
                             <!-- Badan surat warna krim -->
                             <div class="cream-letter-body"></div>
 
-                            <!-- Kertas isi surat: muncul DI DALAM amplop setelah pita dibuka -->
+                            <!-- Kertas isi surat: meluncur naik dari bawah amplop setelah pita dibuka -->
                             <div class="white-paper">
                                 <div class="paper-content">
                                     <span class="paper-label">For Raden Ayu Giselle</span>
@@ -678,7 +749,7 @@
                     </div>
 
                     <span
-                        class="message-instruction mt-4 whitespace-nowrap
+                        class="message-instruction hint-pulse mt-4 whitespace-nowrap
                                text-[10px] tracking-widest text-white/40
                                transition-all duration-300
                                group-hover:text-rose-300"
@@ -720,6 +791,9 @@
             if (opened) return;
 
             opened = true;
+
+            // Hentikan idle float supaya animasi buka hadiah tidak "berebut" transform
+            giftButton.classList.add('is-opening');
 
             // TAMBAHAN UNTUK MEMUTAR LAGU SAAT HADIAH DIKLIK
             bgMusic.play().catch(err => console.log("Gagal memutar audio:", err));
@@ -769,12 +843,13 @@
 
 
             /*
-             * 5. Tampilkan tombol pesan
+             * 5. Tampilkan tombol pesan (dengan urutan muncul bertahap)
              */
             setTimeout(() => {
 
                 messageSection.style.opacity = '1';
                 messageSection.style.pointerEvents = 'auto';
+                messageSection.classList.add('is-visible');
 
             }, 2600);
 
@@ -869,8 +944,9 @@
 
 
         /*
-         * Tombol buka surat: pita terbuka lalu kertas isi surat
-         * langsung muncul DI DALAM amplop (bukan di luar / popup lain)
+         * Tombol buka surat: pita terbuka, lalu kertas isi surat
+         * meluncur naik dari bawah ke atas DI DALAM amplop
+         * (bukan popup/scale di tengah)
          */
         let messageOpened = false;
 
