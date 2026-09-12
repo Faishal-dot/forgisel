@@ -8,9 +8,27 @@
     <title>For My Baby :3</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        /* Mobile-friendly adjustments */
+        html { -webkit-text-size-adjust: 100%; }
+        button { -webkit-tap-highlight-color: transparent; }
+        @media (max-width: 639px) {
+            .gift-box { transform-origin: center; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    </style>
+
 </head>
 
-<body class="min-h-screen overflow-hidden bg-[#080506] text-white">
+<body class="min-h-[100dvh] overflow-x-hidden bg-[#080506] text-white">
 
     <!-- Background -->
     <div class="fixed inset-0 -z-10 overflow-hidden">
@@ -51,23 +69,23 @@
 
 
     <!-- MAIN -->
-    <main class="relative flex min-h-screen items-center justify-center px-6">
+    <main class="relative flex min-h-[100dvh] items-center justify-center px-4 py-6 sm:px-6">
 
         <!-- Initial Screen -->
         <section
             id="giftScreen"
-            class="flex flex-col items-center text-center transition-all duration-700"
+            class="flex w-full max-w-xl flex-col items-center px-2 text-center transition-all duration-700"
         >
 
-            <p class="mb-3 text-xs font-medium uppercase tracking-[0.45em] text-rose-300/70">
+            <p class="mb-3 text-[10px] font-medium uppercase tracking-[0.28em] text-rose-300/70 sm:text-xs sm:tracking-[0.45em]">
                 A little something for you
             </p>
 
-            <h1 class="text-4xl font-semibold tracking-tight sm:text-6xl">
+            <h1 class="text-3xl font-semibold tracking-tight sm:text-6xl">
                 For <span class="text-rose-400">Gisel</span>
             </h1>
 
-            <p class="mt-4 max-w-md text-sm leading-7 text-white/50 sm:text-base">
+            <p class="mt-4 max-w-md px-3 text-sm leading-6 text-white/50 sm:px-0 sm:text-base sm:leading-7">
                 Ada sesuatu kecil yang aku siapin buat kamu.
                 Coba buka hadiahnya.
             </p>
@@ -76,11 +94,9 @@
             <!-- GIFT -->
             <button
                 id="giftButton"
+                aria-label="Buka hadiah untuk Gisel"
                 type="button"
-                class="group relative mt-12
-                       h-48 w-48
-                       sm:h-56 sm:w-56
-                       outline-none"
+                class="group relative mt-10 h-44 w-44 touch-manipulation outline-none sm:mt-12 sm:h-56 sm:w-56"
             >
 
                 <!-- Glow -->
@@ -132,7 +148,7 @@
                     <!-- Body -->
                     <div
                         class="absolute bottom-0 left-1/2
-                               h-28 w-36
+                               h-24 w-32
                                -translate-x-1/2
                                overflow-hidden
                                rounded-b-xl
@@ -213,10 +229,10 @@
 
                 <!-- Text -->
                 <span
-                    class="absolute -bottom-12 left-1/2
+                    class="absolute -bottom-10 left-1/2
                            -translate-x-1/2
                            whitespace-nowrap
-                           text-xs
+                           text-[9px]
                            tracking-[0.25em]
                            text-white/40
                            transition-colors
@@ -241,17 +257,14 @@
         <!-- MESSAGE BUTTON -->
         <section
             id="messageSection"
-            class="pointer-events-none absolute inset-0
-                   flex items-center justify-center
-                   opacity-0
+            class="pointer-events-none absolute inset-0 flex items-center justify-center px-4 opacity-0
                    transition-all duration-1000"
         >
 
             <div class="flex flex-col items-center text-center">
 
                 <div
-                    class="mb-5
-                           rounded-full
+                    class="mb-5 rounded-full
                            border border-white/10
                            bg-white/[0.04]
                            px-4 py-2
@@ -265,11 +278,11 @@
                 </div>
 
 
-                <h2 class="text-3xl font-semibold sm:text-5xl">
+                <h2 class="text-2xl font-semibold sm:text-5xl">
                     Ada pesan buat kamu
                 </h2>
 
-                <p class="mt-3 max-w-sm text-sm leading-6 text-white/40">
+                <p class="mt-3 max-w-sm px-2 text-sm leading-6 text-white/40">
                     Aku sengaja bikin ini khusus buat kamu.
                 </p>
 
@@ -278,7 +291,7 @@
                 <button
                     id="messageButton"
                     type="button"
-                    class="group relative mt-10 flex h-20 w-28 items-center justify-center outline-none transition-all duration-300 hover:-translate-y-2 hover:scale-105 active:scale-95"
+                    class="group relative mt-9 flex h-20 w-28 touch-manipulation items-center justify-center outline-none transition-all duration-300 hover:-translate-y-2 hover:scale-105 active:scale-95"
                 >
                     <!-- Glow effect di belakang amplop -->
                     <div class="absolute inset-0 rounded-xl bg-rose-500/20 blur-xl transition-all duration-300 group-hover:bg-rose-500/50"></div>
@@ -323,13 +336,13 @@
         >
 
             <div
-                class="relative w-full max-w-lg
+                class="relative my-auto w-full max-w-lg max-h-[calc(100dvh-2.5rem)] overflow-y-auto
                        translate-y-10
                        scale-95
                        rounded-[2rem]
                        border border-white/10
                        bg-white/[0.055]
-                       p-7
+                       p-5 sm:p-7
                        shadow-[0_30px_100px_rgba(0,0,0,.5)]
                        backdrop-blur-2xl
                        transition-all duration-700"
@@ -347,7 +360,7 @@
                 </div>
 
 
-                <div class="mb-6 flex items-center justify-between">
+                <div class="mb-5 flex items-start justify-between gap-3 sm:mb-6">
 
                     <div>
                         <p class="text-[10px]
@@ -357,7 +370,7 @@
                             For Raden Ayu Giselle
                         </p>
 
-                        <h3 class="mt-2 text-2xl font-semibold">
+                        <h3 class="mt-2 text-xl font-semibold sm:text-2xl">
                             Untuk kamu ❤️
                         </h3>
                     </div>
@@ -375,9 +388,7 @@
                 </div>
 
 
-                <div class="space-y-4
-                            text-sm
-                            leading-7
+                <div class="space-y-4 text-[13px] leading-6 sm:text-sm sm:leading-7
                             text-white/65">
 
                     <p>
@@ -525,7 +536,7 @@
         function createRoseExplosion() {
 
             // Jumlah mawar ditambah banyak agar memenuhi layar (70 sampai 110 bunga)
-            const roseCount = window.innerWidth < 640 ? 70 : 110;
+            const roseCount = window.innerWidth < 640 ? 45 : 110;
 
             for (let i = 0; i < roseCount; i++) {
 
