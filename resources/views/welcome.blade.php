@@ -9,23 +9,53 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <!-- Fallback Tailwind: keeps the UI styled even if the Vite CSS bundle is unavailable -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Mobile-friendly adjustments */
-        html { -webkit-text-size-adjust: 100%; }
-        button { -webkit-tap-highlight-color: transparent; }
-        @media (max-width: 639px) {
-            .gift-box { transform-origin: center; }
+        @keyframes roseExplosion {
+            0% {
+                transform: translate(-50%, -50%) scale(.15) rotate(0deg);
+                opacity: 0;
+            }
+            12% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(
+                    calc(-50% + var(--rose-x)),
+                    calc(-50% + var(--rose-y))
+                ) scale(1) rotate(var(--rose-r));
+                opacity: 0;
+            }
         }
+
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+
+        body {
+            min-height: 100dvh;
+        }
+
+        button {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @media (max-width: 639px) {
+            .message-card-mobile {
+                max-height: calc(100dvh - 24px);
+                overflow-y: auto;
+            }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
-                animation-duration: 0.01ms !important;
+                animation-duration: .01ms !important;
                 animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
             }
         }
     </style>
-
 </head>
 
 <body class="min-h-[100dvh] overflow-x-hidden bg-[#080506] text-white">
@@ -74,10 +104,10 @@
         <!-- Initial Screen -->
         <section
             id="giftScreen"
-            class="flex w-full max-w-xl flex-col items-center px-2 text-center transition-all duration-700"
+            class="flex flex-col items-center text-center transition-all duration-700"
         >
 
-            <p class="mb-3 text-[10px] font-medium uppercase tracking-[0.28em] text-rose-300/70 sm:text-xs sm:tracking-[0.45em]">
+            <p class="mb-3 text-xs font-medium uppercase tracking-[0.45em] text-rose-300/70">
                 A little something for you
             </p>
 
@@ -148,7 +178,7 @@
                     <!-- Body -->
                     <div
                         class="absolute bottom-0 left-1/2
-                               h-24 w-32
+                               h-28 w-36
                                -translate-x-1/2
                                overflow-hidden
                                rounded-b-xl
@@ -229,10 +259,10 @@
 
                 <!-- Text -->
                 <span
-                    class="absolute -bottom-10 left-1/2
+                    class="absolute -bottom-12 left-1/2
                            -translate-x-1/2
                            whitespace-nowrap
-                           text-[9px]
+                           text-xs
                            tracking-[0.25em]
                            text-white/40
                            transition-colors
@@ -257,14 +287,17 @@
         <!-- MESSAGE BUTTON -->
         <section
             id="messageSection"
-            class="pointer-events-none absolute inset-0 flex items-center justify-center px-4 opacity-0
+            class="pointer-events-none absolute inset-0
+                   flex items-center justify-center
+                   opacity-0
                    transition-all duration-1000"
         >
 
             <div class="flex flex-col items-center text-center">
 
                 <div
-                    class="mb-5 rounded-full
+                    class="mb-5
+                           rounded-full
                            border border-white/10
                            bg-white/[0.04]
                            px-4 py-2
@@ -282,7 +315,7 @@
                     Ada pesan buat kamu
                 </h2>
 
-                <p class="mt-3 max-w-sm px-2 text-sm leading-6 text-white/40">
+                <p class="mt-3 max-w-sm text-sm leading-6 text-white/40">
                     Aku sengaja bikin ini khusus buat kamu.
                 </p>
 
@@ -291,7 +324,7 @@
                 <button
                     id="messageButton"
                     type="button"
-                    class="group relative mt-9 flex h-20 w-28 touch-manipulation items-center justify-center outline-none transition-all duration-300 hover:-translate-y-2 hover:scale-105 active:scale-95"
+                    class="group relative mt-10 flex h-20 w-28 items-center justify-center outline-none transition-all duration-300 hover:-translate-y-2 hover:scale-105 active:scale-95"
                 >
                     <!-- Glow effect di belakang amplop -->
                     <div class="absolute inset-0 rounded-xl bg-rose-500/20 blur-xl transition-all duration-300 group-hover:bg-rose-500/50"></div>
@@ -336,7 +369,7 @@
         >
 
             <div
-                class="relative my-auto w-full max-w-lg max-h-[calc(100dvh-2.5rem)] overflow-y-auto
+                class="message-card-mobile relative w-full max-w-lg
                        translate-y-10
                        scale-95
                        rounded-[2rem]
@@ -360,7 +393,7 @@
                 </div>
 
 
-                <div class="mb-5 flex items-start justify-between gap-3 sm:mb-6">
+                <div class="mb-6 flex items-center justify-between">
 
                     <div>
                         <p class="text-[10px]
@@ -370,7 +403,7 @@
                             For Raden Ayu Giselle
                         </p>
 
-                        <h3 class="mt-2 text-xl font-semibold sm:text-2xl">
+                        <h3 class="mt-2 text-2xl font-semibold">
                             Untuk kamu ❤️
                         </h3>
                     </div>
