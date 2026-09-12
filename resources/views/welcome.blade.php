@@ -48,10 +48,193 @@
             }
         }
 
+
+        /* ==============================
+           ENVELOPE -> CREAM LETTER ANIMATION
+           ============================== */
+        .letter-scene {
+            position: relative;
+            width: min(82vw, 320px);
+            height: 190px;
+            perspective: 900px;
+        }
+
+        .envelope-wrap {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 220px;
+            height: 145px;
+            transform: translate(-50%, -50%);
+            transform-style: preserve-3d;
+            transition: transform .45s ease;
+        }
+
+        .envelope-body {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            border-radius: 16px;
+            background: linear-gradient(145deg, #e52a55, #b30e35 70%, #7f1028);
+            border: 1px solid rgba(255,255,255,.22);
+            box-shadow: 0 24px 60px rgba(190,24,93,.42);
+            z-index: 3;
+        }
+
+        .envelope-paper {
+            position: absolute;
+            left: 10%;
+            bottom: 5px;
+            width: 80%;
+            height: 126px;
+            padding: 17px 15px;
+            border-radius: 5px 5px 10px 10px;
+            background: linear-gradient(135deg, #fff8e8, #f4e4c4);
+            color: #5d4435;
+            box-shadow: 0 12px 25px rgba(0,0,0,.22);
+            z-index: 2;
+            transform: translateY(82px);
+            transition:
+                transform 1s cubic-bezier(.16,1,.3,1),
+                box-shadow 1s ease;
+        }
+
+        .envelope-paper::before {
+            content: "";
+            position: absolute;
+            inset: 7px;
+            border: 1px solid rgba(139,91,50,.16);
+            border-radius: 3px;
+        }
+
+        .paper-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            font-family: Georgia, serif;
+            opacity: 0;
+            transform: translateY(8px);
+            transition: opacity .5s ease .45s, transform .5s ease .45s;
+        }
+
+        .paper-heart {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 22px;
+        }
+
+        .paper-title {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .paper-subtitle {
+            display: block;
+            margin-top: 3px;
+            font-size: 9px;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            opacity: .58;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 78%;
+            background: linear-gradient(145deg, #ee4265, #bd153d);
+            clip-path: polygon(0 0, 100% 0, 50% 72%);
+            transform-origin: top center;
+            transform: rotateX(0deg);
+            transition: transform .7s cubic-bezier(.16,1,.3,1);
+            z-index: 5;
+            backface-visibility: hidden;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,.12));
+        }
+
+        .envelope-front-fold {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            pointer-events: none;
+            background:
+                linear-gradient(32deg, transparent 49%, rgba(255,255,255,.15) 50%, transparent 51%),
+                linear-gradient(-32deg, transparent 49%, rgba(255,255,255,.10) 50%, transparent 51%);
+        }
+
+        .envelope-icon {
+            position: absolute;
+            left: 50%;
+            top: 52%;
+            z-index: 6;
+            width: 52px;
+            height: 52px;
+            transform: translate(-50%, -50%);
+            transition: opacity .25s ease, transform .4s ease;
+        }
+
+        .message-button.is-opening .envelope-wrap {
+            transform: translate(-50%, -50%) translateY(8px) scale(.96);
+        }
+
+        .message-button.is-opening .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        .message-button.is-opening .envelope-paper {
+            transform: translateY(-78px);
+            box-shadow: 0 20px 35px rgba(0,0,0,.28);
+        }
+
+        .message-button.is-opening .paper-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .message-button.is-opening .envelope-icon,
+        .message-button.is-opening .message-badge {
+            opacity: 0;
+        }
+
+        .message-button.is-opening .message-instruction {
+            opacity: 0;
+        }
+
+        .message-button.is-opened .envelope-wrap {
+            opacity: 0;
+            transform: translate(-50%, -50%) translateY(-22px) scale(1.08);
+            transition: opacity .45s ease, transform .55s ease;
+        }
+
+        @media (max-width: 639px) {
+            .letter-scene {
+                width: 290px;
+                height: 175px;
+            }
+
+            .envelope-wrap {
+                width: 205px;
+                height: 135px;
+            }
+
+            .envelope-paper {
+                height: 116px;
+            }
+        }
+
         @media (prefers-reduced-motion: reduce) {
             *, *::before, *::after {
                 animation-duration: .01ms !important;
                 animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+            .envelope-flap,
+            .envelope-paper,
+            .paper-content,
+            .envelope-wrap,
+            .envelope-icon {
                 transition-duration: .01ms !important;
             }
         }
@@ -292,24 +475,18 @@
                    opacity-0
                    transition-all duration-1000"
         >
-
             <div class="flex flex-col items-center text-center">
 
                 <div
-                    class="mb-5
-                           rounded-full
+                    class="mb-5 rounded-full
                            border border-white/10
                            bg-white/[0.04]
-                           px-4 py-2
-                           text-[10px]
-                           uppercase
-                           tracking-[0.35em]
-                           text-rose-300/70
-                           backdrop-blur-xl"
+                           px-4 py-2 text-[10px]
+                           uppercase tracking-[0.35em]
+                           text-rose-300/70 backdrop-blur-xl"
                 >
                     Just for you
                 </div>
-
 
                 <h2 class="text-2xl font-semibold sm:text-5xl">
                     Ada pesan buat kamu
@@ -319,41 +496,73 @@
                     Aku sengaja bikin ini khusus buat kamu.
                 </p>
 
-
-                <!-- MENGGANTI TOMBOL TEKS MENJADI GAMBAR PESAN/AMPLOP -->
+                <!-- ENVELOPE + CREAM LETTER ANIMATION -->
                 <button
                     id="messageButton"
                     type="button"
-                    class="group relative mt-10 flex h-20 w-28 items-center justify-center outline-none transition-all duration-300 hover:-translate-y-2 hover:scale-105 active:scale-95"
+                    aria-label="Buka surat untuk Gisel"
+                    class="message-button group relative mt-8 flex h-[210px] w-[300px]
+                           touch-manipulation items-center justify-center outline-none
+                           sm:mt-10 sm:h-[230px] sm:w-[330px]"
                 >
-                    <!-- Glow effect di belakang amplop -->
-                    <div class="absolute inset-0 rounded-xl bg-rose-500/20 blur-xl transition-all duration-300 group-hover:bg-rose-500/50"></div>
+                    <div class="absolute inset-12 rounded-full bg-rose-500/20 blur-3xl
+                                transition-all duration-500 group-hover:bg-rose-500/35"></div>
 
-                    <!-- Kotak Amplop -->
-                    <div class="relative flex h-full w-full items-center justify-center rounded-xl border border-rose-300/30 bg-gradient-to-br from-rose-600 via-rose-700 to-red-900 shadow-[0_15px_40px_rgba(190,24,93,.4)]">
-                        
-                        <!-- Lipatan atas amplop (efek segitiga) -->
-                        <div class="absolute top-0 h-0 w-0 border-l-[54px] border-r-[54px] border-t-[36px] border-l-transparent border-r-transparent border-t-white/10"></div>
+                    <div class="letter-scene">
+                        <!-- Cream paper is behind the envelope and rises when opened -->
+                        <div class="envelope-paper">
+                            <div class="paper-content">
+                                <span class="paper-heart">♥</span>
+                                <span class="paper-title">Untuk kamu</span>
+                                <span class="paper-subtitle">a little letter</span>
+                            </div>
+                        </div>
 
-                        <!-- Ikon Surat -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="z-10 h-10 w-10 text-rose-100 transition-transform duration-500 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916v-.243" />
-                        </svg>
+                        <div class="envelope-wrap">
+                            <div class="envelope-body"></div>
+
+                            <!-- Envelope flap -->
+                            <div class="envelope-flap"></div>
+
+                            <!-- Front folds -->
+                            <div class="envelope-front-fold"></div>
+
+                            <!-- Letter icon -->
+                            <svg
+                                class="envelope-icon"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.5"
+                                aria-hidden="true"
+                            >
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916v-.243" />
+                            </svg>
+                        </div>
                     </div>
 
-                    <!-- Notifikasi Titik Merah (Animasi melompat/bounce) -->
-                    <span class="absolute -right-3 -top-3 z-20 flex h-7 w-7 animate-bounce items-center justify-center rounded-full border-2 border-[#080506] bg-red-500 text-[11px] font-bold text-white shadow-lg">
+                    <!-- Notification -->
+                    <span
+                        class="message-badge absolute right-3 top-1 z-20 flex h-7 w-7
+                               animate-bounce items-center justify-center rounded-full
+                               border-2 border-[#080506] bg-red-500 text-[11px]
+                               font-bold text-white shadow-lg sm:right-5"
+                    >
                         1
                     </span>
 
-                    <!-- Teks instruksi klik -->
-                    <span class="absolute -bottom-8 whitespace-nowrap text-[10px] tracking-widest text-white/40 transition-colors group-hover:text-rose-300">
+                    <span
+                        class="message-instruction absolute bottom-1 whitespace-nowrap
+                               text-[10px] tracking-widest text-white/40
+                               transition-all duration-300
+                               group-hover:text-rose-300"
+                    >
                         KLIK UNTUK MEMBACA
                     </span>
                 </button>
-
             </div>
-
         </section>
 
 
@@ -653,22 +862,34 @@
         /*
          * Tombol buka pesan (DIPERBAIKI DI SINI)
          */
+        let messageOpened = false;
+
         messageButton.addEventListener('click', () => {
 
-            // MENYEMBUNYIKAN AMPLOP AGAR TIDAK TEMBUS PANDANG
-            messageSection.style.opacity = '0';
-            messageSection.style.pointerEvents = 'none';
+            if (messageOpened) return;
+            messageOpened = true;
 
-            // MEMUNCULKAN KARTU PESAN
-            messageCard.style.opacity = '1';
-            messageCard.style.pointerEvents = 'auto';
+            // 1. Buka flap amplop
+            messageButton.classList.add('is-opening');
 
+            // 2. Biarkan kertas cream naik keluar seperti hadiah dibuka
             setTimeout(() => {
+                messageButton.classList.add('is-opened');
+            }, 1350);
 
-                messageCardInner.style.transform =
-                    'translateY(0) scale(1)';
+            // 3. Setelah surat muncul, tampilkan isi pesan
+            setTimeout(() => {
+                messageSection.style.opacity = '0';
+                messageSection.style.pointerEvents = 'none';
 
-            }, 50);
+                messageCard.style.opacity = '1';
+                messageCard.style.pointerEvents = 'auto';
+
+                setTimeout(() => {
+                    messageCardInner.style.transform =
+                        'translateY(0) scale(1)';
+                }, 50);
+            }, 1600);
 
         });
 
