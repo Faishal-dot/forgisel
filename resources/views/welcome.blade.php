@@ -60,6 +60,14 @@
             50% { transform: translateY(-3px); opacity: .85; }
         }
 
+        /* Sama seperti hintNudge, tapi buat elemen yang posisinya
+           di-tengah-kan pakai translateX(-50%) — supaya animasinya
+           tidak "menimpa" dan menghapus posisi tengah tersebut */
+        @keyframes hintNudgeCentered {
+            0%, 100% { transform: translateX(-50%) translateY(0); opacity: .45; }
+            50% { transform: translateX(-50%) translateY(-3px); opacity: .85; }
+        }
+
         @keyframes fadeInUp {
             0% { opacity: 0; transform: translateY(18px); }
             100% { opacity: 1; transform: translateY(0); }
@@ -68,6 +76,13 @@
         @keyframes blobDrift {
             0%, 100% { transform: translate(0, 0) scale(1); }
             50% { transform: translate(24px, -18px) scale(1.1); }
+        }
+
+        /* blob tengah dipusatkan lewat -translate-x/y-1/2 di HTML-nya,
+           jadi keyframe-nya perlu ikut membawa itu supaya tidak "meloncat" */
+        @keyframes blobDriftCenter {
+            0%, 100% { transform: translate(-50%, -50%) translate(0, 0) scale(1); }
+            50% { transform: translate(-50%, -50%) translate(24px, -18px) scale(1.1); }
         }
 
         @keyframes blobDriftReverse {
@@ -80,7 +95,7 @@
             100% { background-position: 50px 50px; }
         }
 
-        .bg-blob-1 { animation: blobDrift 11s ease-in-out infinite; }
+        .bg-blob-1 { animation: blobDriftCenter 11s ease-in-out infinite; }
         .bg-blob-2 { animation: blobDriftReverse 13s ease-in-out infinite; }
         .bg-blob-3 { animation: blobDrift 15s ease-in-out infinite; animation-delay: -4s; }
         .bg-grid { animation: gridDrift 6s linear infinite; }
@@ -104,6 +119,10 @@
 
         .hint-pulse {
             animation: hintNudge 2.4s ease-in-out infinite;
+        }
+
+        .hint-pulse-centered {
+            animation: hintNudgeCentered 2.4s ease-in-out infinite;
         }
 
         #messageButton {
@@ -138,6 +157,7 @@
             inset: 0;
             border-radius: 20px;
             overflow: hidden;
+            perspective: 900px;
         }
 
         .cream-letter-body {
@@ -157,6 +177,24 @@
             inset: 10px;
             border: 1px solid rgba(139,91,50,.18);
             border-radius: 12px;
+        }
+
+        /* Flap segitiga di bagian atas amplop, menutupi lubang amplop.
+           Terbuka (terlipat ke belakang) sesudah pita lepas, sebelum
+           suratnya ditarik keluar. */
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            z-index: 3;
+            clip-path: polygon(0 0, 100% 0, 50% 96%);
+            background: linear-gradient(165deg, #f7e6c2, #e6c691 55%, #d9b57c);
+            border-top: 1px solid rgba(139, 91, 50, .28);
+            box-shadow: 0 10px 18px rgba(0,0,0,.12);
+            transform-origin: top center;
+            backface-visibility: hidden;
         }
 
         /* Kertas isi surat: tersembunyi DI BAWAH amplop sampai pita dibuka,
@@ -231,7 +269,7 @@
         .ribbon-horizontal {
             position: absolute;
             inset: 0;
-            z-index: 3;
+            z-index: 4;
             pointer-events: none;
         }
 
@@ -281,7 +319,7 @@
             position: absolute;
             left: 50%;
             top: 50%;
-            z-index: 4;
+            z-index: 5;
             width: 62px;
             height: 40px;
             transform: translate(-50%, -50%);
@@ -345,7 +383,13 @@
             100% { transform: translate(-50%, -50%) scale(.75); opacity: 0; }
         }
 
-        /* Kertas surat meluncur dari bawah amplop ke posisi normalnya,
+        /* Flap amplop terlipat ke belakang (seperti amplop asli dibuka) */
+        @keyframes flapOpen {
+            0%   { transform: rotateX(0deg); }
+            100% { transform: rotateX(-120deg); }
+        }
+
+        /* Kertas surat ditarik naik dari dalam amplop ke posisi normalnya,
            membawa teksnya sekaligus (bukan pop-up/scale) */
         @keyframes paperSlideUp {
             0%   { transform: translateY(120%); }
@@ -353,19 +397,19 @@
         }
 
         .message-button.is-opening .ribbon-v-top {
-            animation: ribbonRetreatUp 1.3s ease-in-out forwards;
+            animation: ribbonRetreatUp 1.2s ease-in-out forwards;
         }
 
         .message-button.is-opening .ribbon-v-bottom {
-            animation: ribbonRetreatDown 1.3s ease-in-out forwards;
+            animation: ribbonRetreatDown 1.2s ease-in-out forwards;
         }
 
         .message-button.is-opening .ribbon-h-left {
-            animation: ribbonRetreatLeft 1.3s ease-in-out forwards;
+            animation: ribbonRetreatLeft 1.2s ease-in-out forwards;
         }
 
         .message-button.is-opening .ribbon-h-right {
-            animation: ribbonRetreatRight 1.3s ease-in-out forwards;
+            animation: ribbonRetreatRight 1.2s ease-in-out forwards;
         }
 
         .message-button.is-opening .ribbon-bow {
@@ -373,9 +417,14 @@
             animation-delay: .15s;
         }
 
+        .message-button.is-opening .envelope-flap {
+            animation: flapOpen .85s ease-in forwards;
+            animation-delay: .8s;
+        }
+
         .message-button.is-opening .white-paper {
-            animation: paperSlideUp 1.05s cubic-bezier(.22,1,.36,1) forwards;
-            animation-delay: 1s;
+            animation: paperSlideUp 1.15s cubic-bezier(.22,1,.36,1) forwards;
+            animation-delay: 1.35s;
         }
 
         .message-button.is-opening .message-badge,
@@ -628,7 +677,7 @@
 
                 <!-- Text -->
                 <span
-                    class="hint-pulse absolute -bottom-12 left-1/2
+                    class="hint-pulse-centered absolute -bottom-12 left-1/2
                            -translate-x-1/2
                            whitespace-nowrap
                            text-xs
@@ -700,7 +749,10 @@
                             <!-- Badan surat warna krim -->
                             <div class="cream-letter-body"></div>
 
-                            <!-- Kertas isi surat: meluncur naik dari bawah amplop setelah pita dibuka -->
+                            <!-- Flap amplop: terbuka (terlipat ke belakang) setelah pita lepas -->
+                            <div class="envelope-flap"></div>
+
+                            <!-- Kertas isi surat: ditarik naik dari dalam amplop setelah flap terbuka -->
                             <div class="white-paper">
                                 <div class="paper-content">
                                     <span class="paper-label">For Raden Ayu Giselle</span>
