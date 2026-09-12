@@ -1,0 +1,37 @@
+@import 'tailwindcss';
+
+@source '../../resources/views/**/*.blade.php';
+@source '../../resources/js/**/*.js';
+
+@keyframes roseExplosion {
+    0% {
+        opacity: 0;
+        transform:
+            translate(-50%, -50%)
+            scale(0.15)
+            rotate(0deg);
+    }
+
+    15% {
+        opacity: 1;
+        transform:
+            translate(-50%, -50%)
+            scale(1.15)
+            rotate(20deg);
+    }
+
+    70% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform:
+            translate(
+                calc(-50% + var(--rose-x)),
+                calc(-50% + var(--rose-y))
+            )
+            scale(0.75)
+            rotate(var(--rose-r));
+    }
+}
